@@ -8,11 +8,8 @@ let taskFormHandler = (event) => {
   let taskNameInput = document.querySelector("input[name='task-name']").value;
   let taskTypeInput = document.querySelector("select[name='task-type']").value;
 
-  //package data as an object
-  let taskDataObj = {
-    name: taskNameInput,
-    type: taskTypeInput,
-  };
+  //check for data-task-id to determine whether something is being edited
+  let isEdit = formE1.hasAttribute("data-task-id");
 
   //check if input values are empty strings
   if (!taskNameInput || !taskTypeInput) {
@@ -20,8 +17,21 @@ let taskFormHandler = (event) => {
     return false;
   }
 
-  //send it as an argument to createTaskE1
-  createTaskE1(taskDataObj);
+  //has data attribute, so get the task id and call function to complete edit process
+  if (isEdit) {
+    let taskId = formE1.getAttribute("data-task-id");
+    completeEditTask(taskNameInput, taskTypeInput, taskId);
+  }
+  //no data attribute, so create data object as normal and pass to createTaskE1 function
+  else {
+    //package data as an object
+    let taskDataObj = {
+      name: taskNameInput,
+      type: taskTypeInput,
+    };
+
+    createTaskE1(taskDataObj);
+  }
 
   formE1.reset();
 };
@@ -142,6 +152,22 @@ let editTask = (taskId) => {
   document.querySelector("select[name='task-type']").value = taskType;
   document.querySelector("#save-task").textContent = "Save Task";
   formE1.setAttribute("data-task-id", taskId);
+};
+
+let completeEditTask = (taskName, taskType, taskId) => {
+  //find the matching task list item
+  let taskSelected = document.querySelector(
+    ".task-item[data-task-id='" + taskId + "']"
+  );
+
+  //set new values
+  taskSelected.querySelector("h3.task-name").textContent = taskName;
+  taskSelected.querySelector("span.task-type").textContent = taskType;
+
+  alert("Task Updated!");
+
+  formE1.removeAttribute("data-task-id");
+  document.querySelector("#save-task").textContent = "Add Task";
 };
 
 formE1.addEventListener("submit", taskFormHandler);
