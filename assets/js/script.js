@@ -1,6 +1,7 @@
 let taskIdCounter = 0;
 let formE1 = window.document.querySelector("#task-form");
 let tasksToDoE1 = document.querySelector("#tasks-to-do");
+let pageContentE1 = document.querySelector("#page-content");
 
 let taskFormHandler = (event) => {
   event.preventDefault();
@@ -105,4 +106,20 @@ let createTaskActions = (taskId) => {
   return actionContainerE1;
 };
 
+let taskButtonHandler = (event) => {
+  if (event.target.matches(".delete-btn")) {
+    //get element's task id
+    let taskId = event.target.getAttribute("data-task-id");
+    deleteTask(taskId);
+  }
+};
+
+let deleteTask = (taskId) => {
+  let taskSelected = document.querySelector(
+    ".task-item[data-task-id='" + taskId + "']"
+  );
+  taskSelected.remove();
+};
+
 formE1.addEventListener("submit", taskFormHandler);
+pageContentE1.addEventListener("click", taskButtonHandler);
