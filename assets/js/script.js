@@ -246,7 +246,69 @@ let taskStatusChangeHandler = (event) => {
 let saveTasks = () => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
+/* Gets task items from localStorage.
+
+Converts tasks from the string format back into an array of objects.
+
+Iterates through a tasks array and creates task elements on the page from it. */
+let loadTasks = () => {
+  tasks = localStorage.getItem("tasks");
+
+  //stops the function if tasks returns null after local storage is retrieved (nothing in storage), !tasks also works
+  if (tasks === null) {
+    //resets tasks to an empty array instead of null
+    tasks = [];
+    //stops the function from continuing
+    return false;
+  }
+
+  //turns the tasks variable back into an object from a string
+  tasks = JSON.parse(tasks);
+
+  //recreates the tasks html based upon the data stored in the object, similar to the original creation process
+  for (let i = 0; i < tasks.length; i++) {
+    tasks[i].id = taskIdCounter;
+    let listItemE1 = document.createElement("li");
+    listItemE1.className = "task-item";
+    listItemE1.setAttribute("data-task-id", tasks[i].id);
+
+    let taskInfoE1 = document.createElement("div");
+    taskInfoE1.className = "task-info";
+    taskInfoE1.innerHTML =
+      "<h3 class='task-name'>" +
+      tasks[i].name +
+      "</h3><span class='task-type'>" +
+      tasks[i].type +
+      "</span>";
+
+    listItemE1.appendChild(taskInfoE1);
+
+    let taskActionsE1 = createTaskActions(tasks[i].id);
+
+    listItemE1.appendChild(taskActionsE1);
+
+    if (tasks[i].status === "to do") {
+      listItemE1.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 0;
+      tasksToDoE1.appendChild(listItemE1);
+    } else if (tasks[i].status === "in progress") {
+      listItemE1.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 1;
+      tasksInProgressE1.appendChild(listItemE1);
+    } else {
+      listItemE1.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 2;
+      tasksCompletedE1.appendChild(listItemE1);
+    }
+
+    taskIdCounter++;
+  }
+};
 
 formE1.addEventListener("submit", taskFormHandler);
 pageContentE1.addEventListener("click", taskButtonHandler);
 pageContentE1.addEventListener("change", taskStatusChangeHandler);
+loadTasks();
