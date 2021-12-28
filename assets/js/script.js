@@ -81,6 +81,9 @@ let createTaskE1 = (taskDataObj) => {
 
   //increase task counter for the next unique id
   taskIdCounter++;
+
+  //save tasks to local storage
+  saveTasks();
 };
 
 let createTaskActions = (taskId) => {
@@ -159,6 +162,9 @@ let deleteTask = (taskId) => {
 
   //reassign the updatedTasks array to the tasks array
   tasks = updatedTasks;
+
+  //save tasks to local storage
+  saveTasks();
 };
 
 let editTask = (taskId) => {
@@ -200,6 +206,9 @@ let completeEditTask = (taskName, taskType, taskId) => {
 
   formE1.removeAttribute("data-task-id");
   document.querySelector("#save-task").textContent = "Add Task";
+
+  //save tasks to local storage
+  saveTasks();
 };
 
 let taskStatusChangeHandler = (event) => {
@@ -229,6 +238,13 @@ let taskStatusChangeHandler = (event) => {
       tasks[i].status = statusValue;
     }
   }
+
+  //save tasks to local storage
+  saveTasks();
+};
+
+let saveTasks = () => {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
 formE1.addEventListener("submit", taskFormHandler);
