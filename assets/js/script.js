@@ -1,4 +1,5 @@
 let taskIdCounter = 0;
+let tasks = [];
 let formE1 = window.document.querySelector("#task-form");
 let tasksToDoE1 = document.querySelector("#tasks-to-do");
 let tasksInProgressE1 = document.querySelector("#tasks-in-progress");
@@ -30,6 +31,7 @@ let taskFormHandler = (event) => {
     let taskDataObj = {
       name: taskNameInput,
       type: taskTypeInput,
+      status: "to do",
     };
 
     createTaskE1(taskDataObj);
@@ -70,6 +72,12 @@ let createTaskE1 = (taskDataObj) => {
 
   //add entire list item to list
   tasksToDoE1.appendChild(listItemE1);
+
+  //send id to taskDataObj for saving to local
+  taskDataObj.id = taskIdCounter;
+
+  //push entire object to the tasks array
+  tasks.push(taskDataObj);
 
   //increase task counter for the next unique id
   taskIdCounter++;
@@ -137,6 +145,20 @@ let deleteTask = (taskId) => {
     ".task-item[data-task-id='" + taskId + "']"
   );
   taskSelected.remove();
+
+  //create new array to hold updated tasks
+  let updatedTasks = [];
+
+  //loop through current tasks
+  for (let i = 0; i < tasks.length; i++) {
+    //if tasks[i].id does not match the deleted task's id, then preserve it on a new array
+    if (tasks[i].id !== parseInt(taskId)) {
+      updatedTasks.push(tasks[i]);
+    }
+  }
+
+  //reassign the updatedTasks array to the tasks array
+  tasks = updatedTasks;
 };
 
 let editTask = (taskId) => {
@@ -166,6 +188,14 @@ let completeEditTask = (taskName, taskType, taskId) => {
   taskSelected.querySelector("h3.task-name").textContent = taskName;
   taskSelected.querySelector("span.task-type").textContent = taskType;
 
+  //loop through tasks array and task object with new content
+  for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].name = taskName;
+      tasks[i].type = taskType;
+    }
+  }
+
   alert("Task Updated!");
 
   formE1.removeAttribute("data-task-id");
@@ -191,6 +221,13 @@ let taskStatusChangeHandler = (event) => {
     tasksInProgressE1.appendChild(taskSelected);
   } else if (statusValue === "completed") {
     tasksCompletedE1.appendChild(taskSelected);
+  }
+
+  //update task's in tasks array
+  for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].status = statusValue;
+    }
   }
 };
 
